@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { User } from './users/entities/user.entity';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
@@ -14,11 +15,11 @@ import { User } from './users/entities/user.entity';
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         type: 'mysql',
-        host: configService.get<string>('DB_HOST'),
-        port: configService.get<number>('DB_PORT'),
-        username: configService.get<string>('DB_USERNAME'),
-        password: configService.get<string>('DB_PASSWORD'),
-        database: configService.get<string>('DB_DATABASE'),
+        host: configService.get('MYSQLHOST') || configService.get('DB_HOST'),
+        port: configService.get('MYSQLPORT') || configService.get('DB_PORT'),
+        username: configService.get('MYSQLUSER') || configService.get('DB_USERNAME'),
+        password: configService.get('MYSQLPASSWORD') || configService.get('DB_PASSWORD'),
+        database: configService.get('MYSQLDATABASE') || configService.get('DB_DATABASE'),
         entities: [User],
         synchronize: configService.get('NODE_ENV') !== 'production',
         ssl: configService.get('NODE_ENV') === 'production' ? {
@@ -29,6 +30,9 @@ import { User } from './users/entities/user.entity';
     }),
     AuthModule,
     UsersModule,
+    HealthModule,
   ],
 })
+
+
 export class AppModule {}
