@@ -16,7 +16,7 @@ import { HealthModule } from './health/health.module';
       useFactory: (configService: ConfigService) => ({
         type: 'mysql',
         host: configService.get('MYSQLHOST') || configService.get('DB_HOST'),
-        port: configService.get('MYSQLPORT') || configService.get('DB_PORT'),
+        port: parseInt(configService.get('MYSQLPORT') || configService.get('DB_PORT') || '3306', 10),
         username: configService.get('MYSQLUSER') || configService.get('DB_USERNAME'),
         password: configService.get('MYSQLPASSWORD') || configService.get('DB_PASSWORD'),
         database: configService.get('MYSQLDATABASE') || configService.get('DB_DATABASE'),
@@ -25,6 +25,12 @@ import { HealthModule } from './health/health.module';
         ssl: configService.get('NODE_ENV') === 'production' ? {
           rejectUnauthorized: false
         } : false,
+        connectTimeout: 60000,
+        acquireTimeout: 60000,
+        timeout: 60000,
+        extra: {
+          connectionLimit: 5
+        }
       }),
       inject: [ConfigService],
     }),
