@@ -15,10 +15,10 @@ import { HealthModule } from './health/health.module';
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         type: 'mysql',
-        host: 'nozomi.proxy.rlwy.net',
+        host: configService.get('DB_HOST'),
         port: 54782,
         username: 'root',
-        password: 'xrYoyZKhsgDFwpbmpcoZwgpjBQBlelZs',
+        password: process.env.DB_PASS,
         database: 'railway',
         entities: [User],
         synchronize: configService.get('NODE_ENV') !== 'production',
